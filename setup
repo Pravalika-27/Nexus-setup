@@ -1,0 +1,48 @@
+NEXUS Setup
+- Launch EC2 Instance
+- Amazon Linux, Kernel 5.10, t2.medium
+- Port 8081 should be enabled in security
+group
+- Volume should be 20-25GB
+Nexus Setup:
+- Install dependency java-1.8 version
+“sudo yum install
+java-17-amazon-corretto-headless -y”
+- Create a directory and get into
+directory
+“mkdir /app” && cd /app”
+- Download Nexus file
+“wget -O nexus.tar.gz
+https://download.sonatype.com/nexus/3/l
+atest-unix.tar.gz”
+- Untar the file
+“tar -xvf nexus.tar.gz”
+- Rename the file
+“mv nexus-3* nexus”
+- Add a User
+“useradd nexus”
+- Change the Ownership
+“chown -R nexus:nexus /app/nexus”
+“chown -R nexus:nexus
+/app/sonatype-work”
+- Change Nexus Configuration
+“vim /app/nexus/bin/nexus.rc”
+run_as_user=”nexus”
+- Create a Nexus Service File
+“vim /etc/systemd/system/nexus.service”
+[Unit]
+Description=nexus service
+After=network.target
+[Service]
+Type=forking
+LimitNOFILE=65536
+User=nexus
+Group=nexus
+ExecStart=/app/nexus/bin/nexus start
+ExecStop=/app/nexus/bin/nexus stop
+User=nexus
+Restart=on-abort
+[Install]
+WantedBy=multi-user.target
+- Start the Server
+“Systemctl start nexus"
